@@ -1,0 +1,70 @@
+﻿@model IEnumerable<DynamicMenuProject.View_Models.CMSItemsViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/ckeditor/ckeditor.js"></script>
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<h1>Manage Pages</h1>
+<table class="table table-striped" id="MyDataTable">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Page Name</th>
+            <th>Page Url</th>
+            <th>Description</th>
+            <th>Banner Image</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cms in Model)
+        {
+        <tr>
+            <td>@cms.Id</td>
+            <td>@cms.PageName</td>
+            <td>@cms.PageUrl</td>
+            <td>@cms.Description</td>
+            <td>
+            @if (cms.BannerImage != null)
+            {
+                <img style="width:350px;height:350px; object-fit:cover" src="~/Images/@cms.BannerImage">
+            }
+            </td>
+            <td>
+                <a asp-action="EditPage" asp-controller="CMS" asp-route-id="@cms.Id" class="btn btn-primary">Edit</a>
+            </td>
+            <td>
+                <form asp-action="DeletePage" asp-controller="CMS" asp-route-id="@cms.Id" method="post">
+                    @*<a class="btn btn-danger" asp-controller="CMS" asp-action="DeletePage" asp-route-id="@cms.Id">Delete</a>*@
+                    <span id="confirmDeleteSpan_@cms.Id" style="display:none">
+                        <span>Are you sure you want to delete?</span>
+                        <button type="submit" class="btn btn-danger">Yes</button>
+                        <a href="#" class="btn btn-primary"
+                           onclick="confirmDelete('@cms.Id',false)">No</a>
+                    </span>
+                    <span id="deleteSpan_@cms.Id">
+                        <a href="#" class="btn btn-danger"
+                           onclick="confirmDelete('@cms.Id',true)">Delete</a>
+                    </span>
+                </form>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/af-2.3.7/datatables.min.css" />
+    <script src="~/js/CustomScript.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/af-2.3.7/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#MyDataTable").DataTable();
+            CKEDITOR.replace('#Description');
+
+        }
+        )
+    </script>
+}

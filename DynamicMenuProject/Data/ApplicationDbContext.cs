@@ -18,5 +18,6 @@ namespace DynamicMenuProject.Data
         public DbSet<Countries> Countries { get; set; }
         public DbSet<States> States { get; set; }
         public DbSet<Cities> Cities { get; set; }
+        public DbSet<CMSItems> CMSItems { get; set; }
     }
 }

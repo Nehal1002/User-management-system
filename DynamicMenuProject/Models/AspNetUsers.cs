@@ -34,6 +34,8 @@ namespace DynamicMenuProject.Models
         public int? CountryId { get; set; }
         public int? StateId { get; set; }
         public int? CityId { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
 
         public virtual ICollection<AspNetUserClaims> AspNetUserClaims { get; set; }
         public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }

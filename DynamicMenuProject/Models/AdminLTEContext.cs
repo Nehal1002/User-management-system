@@ -23,6 +23,7 @@ namespace DynamicMenuProject.Models
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Cities> Cities { get; set; }
+        public virtual DbSet<CMSItems> Cmsitems { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<MenuItems> MenuItems { get; set; }
         public virtual DbSet<MenuPermissions> MenuPermissions { get; set; }
@@ -144,6 +145,11 @@ namespace DynamicMenuProject.Models
                 entity.Property(e => e.CityName)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CMSItems>(entity =>
+            {
+                entity.ToTable("CMSItems");
             });
 
             modelBuilder.Entity<Countries>(entity =>
