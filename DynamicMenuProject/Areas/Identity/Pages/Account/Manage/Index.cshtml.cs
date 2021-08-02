@@ -143,22 +143,24 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account.Manage
                 user.LastName = Input.LastName;
                 await _userManager.UpdateAsync(user);
             }
-
-            if (Input.ProfilePictureFile != null)
+            var profilePicture = user.ProfilePicture;
+            if (Input.ProfilePicture != profilePicture)
             {
-                string wwwRootPath = _hostEnvironment.WebRootPath;
-                string fileName = Path.GetFileNameWithoutExtension(Input.ProfilePictureFile.FileName);
-                string extension = Path.GetExtension(Input.ProfilePictureFile.FileName);
-                user.ProfilePicture = DateTime.Now.ToString("yymmssfff") + extension;
+                if (Input.ProfilePictureFile != null)
+                {
+                    string wwwRootPath = _hostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(Input.ProfilePictureFile.FileName);
+                    string extension = Path.GetExtension(Input.ProfilePictureFile.FileName);
+                    user.ProfilePicture = DateTime.Now.ToString("yymmssfff") + extension;
 
 
-                string path = Path.Combine(wwwRootPath, "Upload", user.ProfilePicture);
-                var fileStream = new FileStream(path, FileMode.Create);
-                Input.ProfilePictureFile.CopyTo(fileStream);
-                await _userManager.UpdateAsync(user);
+                    string path = Path.Combine(wwwRootPath, "Upload", user.ProfilePicture);
+                    var fileStream = new FileStream(path, FileMode.Create);
+                    Input.ProfilePictureFile.CopyTo(fileStream);
+                    await _userManager.UpdateAsync(user);
 
+                }
             }
-
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
