@@ -101,7 +101,8 @@
 
 
             $("#CountryId").on("change", function () {
-
+                $("#StateId").empty();
+                $("#CityId").empty();
                 $.ajax({
                     url: '/Home/GetStatesByCountryId',
                     type: 'GET',
@@ -127,6 +128,7 @@
                 });
             });
             $("#StateId").on("change", function () {
+                $("#CityId").empty();
                 $.ajax({
                     url: '/Home/GetCitiesByStateId',
                     type: 'GET',
