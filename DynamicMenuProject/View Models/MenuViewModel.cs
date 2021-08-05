@@ -13,8 +13,11 @@ namespace DynamicMenuProject.View_Models
         [Required]
         public string Name { get; set; }
         public string Path { get; set; }
+        [Required]
         public int ParentId { get; set; }
+        [Required]
         public int MenuLevel { get; set; }
+        [Required]
         public int MenuGrpId { get; set; }
     }
 }

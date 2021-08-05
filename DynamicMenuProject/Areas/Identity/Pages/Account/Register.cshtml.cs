@@ -92,10 +92,11 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account
             [Display(Name = "Profile Picture")]
             public string ProfilePicture { get; set; }
 
+            [Required]
             [Display(Name = "Profile Picture")]
             public IFormFile ProfilePictureFile { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Country is required.")]
             [Display(Name = "Country")]
             public int CountryId { get; set; }
 

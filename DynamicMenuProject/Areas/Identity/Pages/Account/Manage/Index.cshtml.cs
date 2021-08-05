@@ -50,12 +50,15 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account.Manage
             [EmailAddress]
             public string Email { get; set; }
 
+            [Required]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
+            [Required]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
+            [Required]
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -63,6 +66,7 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Profile Picture")]
             public string ProfilePicture { get; set; }
 
+            [Required]
             [Display(Name = "Profile Picture")]
             public IFormFile ProfilePictureFile { get; set; }
         }
@@ -144,9 +148,9 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account.Manage
                 await _userManager.UpdateAsync(user);
             }
             var profilePicture = user.ProfilePicture;
-            if (Input.ProfilePicture != profilePicture)
+            if (Input.ProfilePictureFile != null)
             {
-                if (Input.ProfilePictureFile != null)
+                if (Input.ProfilePicture != profilePicture)
                 {
                     string wwwRootPath = _hostEnvironment.WebRootPath;
                     string fileName = Path.GetFileNameWithoutExtension(Input.ProfilePictureFile.FileName);
@@ -159,6 +163,19 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account.Manage
                     Input.ProfilePictureFile.CopyTo(fileStream);
                     await _userManager.UpdateAsync(user);
 
+                }
+                else if(profilePicture==null)
+                {
+                    string wwwRootPath = _hostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(Input.ProfilePictureFile.FileName);
+                    string extension = Path.GetExtension(Input.ProfilePictureFile.FileName);
+                    user.ProfilePicture = DateTime.Now.ToString("yymmssfff") + extension;
+
+
+                    string path = Path.Combine(wwwRootPath, "Upload", user.ProfilePicture);
+                    var fileStream = new FileStream(path, FileMode.Create);
+                    Input.ProfilePictureFile.CopyTo(fileStream);
+                    await _userManager.UpdateAsync(user);
                 }
             }
             await _signInManager.RefreshSignInAsync(user);

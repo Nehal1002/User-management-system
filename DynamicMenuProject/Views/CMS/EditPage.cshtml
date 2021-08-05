@@ -28,11 +28,11 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="PageUrl"></label>
-                        <input asp-for="PageUrl" class="form-control">
+                        <input asp-for="PageUrl" class="form-control" disabled>
                         <span asp-validation-for="PageUrl" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                      
+
                         <label asp-for="Description"></label>
                         <textarea asp-for="Description" id="Description" class="ckeditor" name="Description" rows="200"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
@@ -42,7 +42,7 @@
                         <label asp-for="BannerImageFile"></label>
                         @if (Model.BannerImage != null)
                         {
-                            <img style="width:350px;height:350px; object-fit:cover" src="~/Images/@Model.BannerImage">
+                            <img width="50px" style="width:50px;height:50px; object-fit:cover" src="~/Images/@Model.BannerImage">
                         }
                         <input asp-for="BannerImageFile" class="form-control" type="file" />
                         <span asp-validation-for="BannerImageFile" class="text-danger"></span>
@@ -51,7 +51,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="submit" asp-controller="CMS" asp-action="Index" class="btn btn-primary">Cancel</button>
+                    <a href="/CMS/Index" type="submit" class="btn btn-primary">Cancel</a>
                 </div>
             </form>
         </div>
@@ -59,10 +59,11 @@
 </div>
 
 @section scripts{
-    
+        <partial name="_ValidationScriptsPartial" />
+
     <script>
         $(document).ready(function () {
-            
+
             //CKEDITOR.replace('#Description');
 
         }

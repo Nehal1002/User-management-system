@@ -7,6 +7,11 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/ckeditor/ckeditor.js"></script>
 <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+@*<environment include="Development">
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</environment>*@
 <div class="row">
     <!-- left column -->
     <div class="col-md-6">
@@ -19,16 +24,16 @@
             <!-- form start -->
             <form method="post" enctype="multipart/form-data">
                 <div class="card-body">
-                    <div asp-validation-summary="All" class="text-danger">
+                    @*<div asp-validation-summary="All" class="text-danger">*@
                     </div>
                     <div class="form-group">
                         <label asp-for="PageName"></label>
-                        <input asp-for="PageName" class="form-control" placeholder="Name">
+                        <input asp-for="PageName" class="form-control" placeholder="PageName">
                         <span asp-validation-for="PageName" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="PageUrl"></label>
-                        <input asp-for="PageUrl" class="form-control" placeholder="Path">
+                        <input asp-for="PageUrl" class="form-control" placeholder="PageUrl">
                         <span asp-validation-for="PageUrl" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -50,4 +55,6 @@
         </div>
     </div>
 </div>
-
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

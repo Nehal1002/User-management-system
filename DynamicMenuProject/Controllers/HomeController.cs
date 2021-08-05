@@ -49,6 +49,20 @@ namespace DynamicMenuProject.Controllers
         }
 
         [AllowAnonymous]
+        public IActionResult Pages(string Id)
+        {
+            CMSItems mvm = new CMSItems();
+            var page = (_context.CMSItems.Where(p => p.PageUrl == Id).ToList());
+            foreach (var item in page)
+            {
+                mvm.PageName = item.PageName;
+                mvm.Description = item.Description;
+                mvm.BannerImage = item.BannerImage;
+            }
+            return View(mvm);
+        }
+
+        [AllowAnonymous]
         public JsonResult Country()
         {
             var coun = _context.Countries.

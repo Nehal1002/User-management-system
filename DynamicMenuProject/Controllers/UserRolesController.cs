@@ -32,6 +32,8 @@ namespace DynamicMenuProject.Controllers
             {
                 var thisViewModel = new UserRolesViewModel();
                 thisViewModel.UserId = user.Id;
+                thisViewModel.FirstName = user.FirstName;
+                thisViewModel.LastName = user.LastName;
                 thisViewModel.Email = user.Email;
                 thisViewModel.Roles = await GetUserRoles(user);
                 userRolesViewModel.Add(thisViewModel);
@@ -76,6 +78,8 @@ namespace DynamicMenuProject.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var model = new EditUserViewModel
             {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 //UserName = user.UserName,
                 Roles = userRoles
@@ -94,6 +98,8 @@ namespace DynamicMenuProject.Controllers
             }
             else
             {
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
                 user.Email = model.Email;
                 //user.UserName = model.UserName;
                 var result = await _userManager.UpdateAsync(user);

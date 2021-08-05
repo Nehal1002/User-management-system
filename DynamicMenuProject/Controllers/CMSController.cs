@@ -8,6 +8,7 @@ using DynamicMenuProject.Models;
 using DynamicMenuProject.View_Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace DynamicMenuProject.Controllers
 {
@@ -23,6 +24,7 @@ namespace DynamicMenuProject.Controllers
             _context = context;
             _hostEnvironment = hostEnvironment;
         }
+        [HttpGet]
         public IActionResult Index()
         {
             //string wwwPath = this._.WebRootPath;
@@ -151,7 +153,7 @@ namespace DynamicMenuProject.Controllers
             return View();
         }
 
-        [HttpPost]
+       // [HttpPost]
         public IActionResult DeletePage(int Id)
         {
             var page = _context.CMSItems.FirstOrDefault(m => m.Id == Id);
@@ -163,6 +165,32 @@ namespace DynamicMenuProject.Controllers
 
             return RedirectToAction("Index");
 
+        }
+        public JsonResult IsPageNameExist(string pageName, int? Id)
+        {
+            var validateName = _context.CMSItems.FirstOrDefault(x => x.PageName == pageName && x.Id != Id );
+
+            if (validateName != null)
+            {
+                return Json(false, new JsonSerializerSettings());
+            }
+            else
+            {
+                return Json(true, new JsonSerializerSettings());
+            }
+        }
+        public JsonResult IsPageUrlExist(string pageUrl, int? Id)
+        {
+            var validateName = _context.CMSItems.FirstOrDefault(x => x.PageUrl == pageUrl && x.Id != Id);
+
+            if (validateName != null)
+            {
+                return Json(false, new JsonSerializerSettings());
+            }
+            else
+            {
+                return Json(true, new JsonSerializerSettings());
+            }
         }
     }
 }
