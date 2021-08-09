@@ -100,10 +100,12 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account
             [Display(Name = "Country")]
             public int CountryId { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "State is required.")]
+            [Display(Name = "State")]
             public int StateId { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "City is required.")]
+            [Display(Name = "City")]
             public int CityId { get; set; }
 
             [Required]
@@ -163,6 +165,11 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account
                     var fileStream = new FileStream(path, FileMode.Create);
                     Input.ProfilePictureFile.CopyTo(fileStream);
                 }
+                
+
+
+
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

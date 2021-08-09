@@ -152,6 +152,14 @@ namespace DynamicMenuProject.Areas.Identity.Pages.Account.Manage
             {
                 if (Input.ProfilePicture != profilePicture)
                 {
+
+                    var paths = Path.Combine(_hostEnvironment.WebRootPath, "Upload", profilePicture);
+
+                    if (System.IO.File.Exists(paths))
+                    {
+                        // If file found, delete it    
+                        System.IO.File.Delete(Path.Combine(paths));
+                    }
                     string wwwRootPath = _hostEnvironment.WebRootPath;
                     string fileName = Path.GetFileNameWithoutExtension(Input.ProfilePictureFile.FileName);
                     string extension = Path.GetExtension(Input.ProfilePictureFile.FileName);

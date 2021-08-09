@@ -13,8 +13,11 @@
             <div class="card-header">
                 <label>Select Role</label>
                 @Html.DropDownList("RoleId", (IEnumerable<SelectListItem>)ViewBag.RolesList, "Select Role")
-
+                 
+                <a href="/Permission/Index" type="submit" class="btn btn-primary fa-pull-right">Cancel</a>
+                
                 <button id="btnSave" class="btn btn-primary fa-pull-right">Save</button>
+
             </div>
             <div class="card-body p-0">
                 <table id="idgrid" class="table">

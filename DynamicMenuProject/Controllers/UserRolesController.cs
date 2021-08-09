@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DynamicMenuProject.Areas.Identity.Pages.Account;
 using DynamicMenuProject.Helpers;
 using DynamicMenuProject.Models;
 using DynamicMenuProject.View_Models;
 //using FinalProjectSecond.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +20,15 @@ namespace DynamicMenuProject.Controllers
     public class UserRolesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHostingEnvironment _hostEnvironment;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserRolesController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserRolesController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+                                    IHostingEnvironment hostEnvironment)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _hostEnvironment = hostEnvironment;
         }
         public async Task<IActionResult> Index()
         {
@@ -40,6 +46,57 @@ namespace DynamicMenuProject.Controllers
             }
             return View(userRolesViewModel);
         }
+
+        [HttpGet]
+        public IActionResult AddUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUser(RegisterModel.InputModel model)
+        {
+            //if (ModelState.IsValid)
+            //{
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    ProfilePicture = model.ProfilePicture,
+                    Address1 = model.Address1,
+                    Address2 = model.Address2,
+                    CountryId = model.CountryId,
+                    StateId = model.StateId,
+                    CityId = model.CityId
+                };
+                if (model.ProfilePictureFile != null)
+                {
+                    string wwwRootPath = _hostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(model.ProfilePictureFile.FileName);
+                    string extension = Path.GetExtension(model.ProfilePictureFile.FileName);
+                    user.ProfilePicture = DateTime.Now.ToString("yymmssfff") + extension;
+
+
+                    string path = Path.Combine(wwwRootPath, "Upload", user.ProfilePicture);
+                    //var mem = new MemoryStream();
+                    //user.ProfilePicture
+                    var fileStream = new FileStream(path, FileMode.Create);
+                    model.ProfilePictureFile.CopyTo(fileStream);
+                }
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+
+                    return RedirectToAction("Index", "UserRoles");
+                }
+                return View(model);
+            //}
+            //else
+            //    return View(model);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
@@ -80,8 +137,14 @@ namespace DynamicMenuProject.Controllers
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                CountryId = user.CountryId,
+                StateId = user.StateId,
+                CityId = user.CityId,
                 Email = user.Email,
-                //UserName = user.UserName,
+                ProfilePicture = user.ProfilePicture,
+                Address1 = user.Address1,
+                Address2 = user.Address2,
+                UserName = user.Email,
                 Roles = userRoles
             };
             return View(model);
@@ -101,7 +164,51 @@ namespace DynamicMenuProject.Controllers
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
+                user.CountryId = model.CountryId;
+                user.StateId = model.StateId;
+                user.CityId = model.CityId;
+                user.Address1 = model.Address1;
+                user.Address2 = model.Address2;
+                //user.ProfilePicture = model.ProfilePicture;
                 //user.UserName = model.UserName;
+                var profilePicture = user.ProfilePicture;
+                if (model.ProfilePictureFile != null)
+                {
+                    if (model.ProfilePicture != profilePicture)
+                    {
+                        var paths = Path.Combine(_hostEnvironment.WebRootPath, "Upload", profilePicture);
+
+                        if (System.IO.File.Exists(paths))
+                        {
+                            // If file found, delete it    
+                            System.IO.File.Delete(Path.Combine(paths));
+                        }
+                        string wwwRootPath = _hostEnvironment.WebRootPath;
+                        string fileName = Path.GetFileNameWithoutExtension(model.ProfilePictureFile.FileName);
+                        string extension = Path.GetExtension(model.ProfilePictureFile.FileName);
+                        user.ProfilePicture = DateTime.Now.ToString("yymmssfff") + extension;
+
+
+                        string path = Path.Combine(wwwRootPath, "Upload", user.ProfilePicture);
+                        var fileStream = new FileStream(path, FileMode.Create);
+                        model.ProfilePictureFile.CopyTo(fileStream);
+                        await _userManager.UpdateAsync(user);
+
+                    }
+                    else if (profilePicture == null)
+                    {
+                        string wwwRootPath = _hostEnvironment.WebRootPath;
+                        string fileName = Path.GetFileNameWithoutExtension(model.ProfilePictureFile.FileName);
+                        string extension = Path.GetExtension(model.ProfilePictureFile.FileName);
+                        user.ProfilePicture = DateTime.Now.ToString("yymmssfff") + extension;
+
+
+                        string path = Path.Combine(wwwRootPath, "Upload", user.ProfilePicture);
+                        var fileStream = new FileStream(path, FileMode.Create);
+                        model.ProfilePictureFile.CopyTo(fileStream);
+                        await _userManager.UpdateAsync(user);
+                    }
+                }
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
