@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using FinalProjectSecond.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Rotativa.AspNetCore;
 
 namespace DynamicMenuProject
 {
@@ -54,6 +55,8 @@ namespace DynamicMenuProject
                 options.SignIn.RequireConfirmedEmail = true;
             });
             services.AddTransient<IEmailSender, EmailSender>();
+            
+
             services.AddMvc(config => {
                 var policy = new AuthorizationPolicyBuilder()
                  .RequireAuthenticatedUser()
@@ -89,6 +92,7 @@ namespace DynamicMenuProject
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            RotativaConfiguration.Setup(env);
         }
     }
 }
