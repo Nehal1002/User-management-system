@@ -254,7 +254,7 @@ namespace DynamicMenuProject.Controllers
             var details = (from f in _context.FeedbackResult
                            join u in _context.Users on f.UserId equals u.Id
                            join q in _context.Questions on f.QuestionId equals q.Id
-                          // join r in _context.RelatedValues on f.QuestionId equals r.QuestionId   
+                          //join r in _context.RelatedValues on f.OptionId.Split(',').Select(Int32.Parse).Contains(r.Id) equals r.Id
                            where (f.UserId == Id)
                            select new FeedbackFormViewModel
                            {
@@ -276,6 +276,15 @@ namespace DynamicMenuProject.Controllers
             
             return View(details);
         }
+
+        public ActionResult ViewDetailsNew()
+        {
+            var procedureData = _context.RelatedProcedure.FromSql("EXECUTE RelatedProcedure").ToList();
+            
+            return View(procedureData);
+        }
+
+
 
         public async Task<string> options(string optionIds)
         {

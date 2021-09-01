@@ -25,5 +25,9 @@ namespace DynamicMenuProject.Data
         public DbSet<Questions> Questions { get; set; }
         public DbSet<RelatedValues> RelatedValues { get; set; }
         public DbSet<FeedbackResult> FeedbackResult { get; set; }
+        public DbSet<RelatedProcedure> RelatedProcedure { get; set; }
+        public DbSet<State> State { get; set; }
+        public DbSet<City> City { get; set; }
+        public DbSet<SurveyUrl> SurveyUrl { get; set; }
     }
 }

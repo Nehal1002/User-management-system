@@ -8,6 +8,7 @@ using DynamicMenuProject.Models;
 using DynamicMenuProject.View_Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 namespace DynamicMenuProject.Controllers
 {
@@ -375,5 +376,101 @@ namespace DynamicMenuProject.Controllers
             }
             return Json("NoData");
         }
+
+
+        public IActionResult MenuPermissions()
+        {
+            List<TreeViewNode> nodes = new List<TreeViewNode>();
+
+            //Loop and add the parent nodes.
+            foreach (var type in _context.MenuItems.Where(p => p.ParentId == 0).ToList())
+            {
+                nodes.Add(new TreeViewNode { id = type.Id.ToString(), parent = "#", text = type.Name });
+            }
+            //Loop and add the child nodes..Where(p => p.ParentId > 0).ToList()
+            //
+            foreach (var subType in _context.MenuItems.Where(p => p.ParentId > 0/*|| p.ParentId == 6 || p.ParentId == 24 || p.ParentId == 1025 || p.ParentId == 1030 || p.ParentId == 1032*/).ToList())
+            {
+                nodes.Add(new TreeViewNode
+                {
+                    id = subType.ParentId.ToString() + "-" + subType.Id.ToString(),
+                    parent = subType.ParentId.ToString(),
+                    text = subType.Name
+                });
+            }
+            ViewBag.Json = JsonConvert.SerializeObject(nodes);
+            var RolesList = (from roles in _context.Roles
+                             select new SelectListItem
+                             {
+                                 Value = roles.Id,
+                                 Text = roles.Name
+                             }).ToList();
+            ViewBag.RolesList = RolesList;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult MenuPermissions(string selectedItems)
+        {
+            List<TreeViewNode> items = JsonConvert.DeserializeObject<List<TreeViewNode>>(selectedItems);
+            return RedirectToAction("MenuPermissions");
+        }
+        
+        public IActionResult TreeViewFinal(Guid RoleId)
+        {
+
+            List<PermissionViewModel> lstPermission = new List<PermissionViewModel>();
+            List<Final> obj = new List<Final>();
+
+            var RolesList = (from roles in _context.Roles
+                             select new SelectListItem
+                             {
+                                 Value = roles.Id,
+                                 Text = roles.Name
+                             }).ToList();
+            ViewBag.RolesList = RolesList;
+
+            var Permission = (from per in _context.MenuPermissions
+                              where (per.RoleId == RoleId)
+                              select per.MenuId);
+
+            var per1 = string.Join(",", Permission);
+            ViewBag.Per = per1;
+
+            var result = (from Menus in _context.MenuItems
+                          join Permissions in _context.MenuPermissions.Where(r => r.RoleId == RoleId)
+                          on Menus.Id equals Permissions.MenuId into menuPerm
+                          from perm in menuPerm.DefaultIfEmpty()
+                          select new PermissionViewModel
+                          {
+                              Id = Menus.Id,
+                              Path = Menus.Path,
+                              Name = Menus.Name,
+                              ParentId = Menus.ParentId,
+                              MenuLevel = Menus.MenuLevel,
+                              HasAccess = perm == null ? false : !(string.IsNullOrEmpty(Convert.ToString(perm.RoleId)))
+                          }).ToList();
+
+            // Loop and add the Parent Nodes.
+            foreach (var type in result.Where(p => p.ParentId == 0))
+            {
+                List<Child> ch = new List<Child>();
+                foreach (var subChild in result.Where(x => x.ParentId == type.Id))
+                {
+                    ch.Add(new Child { id = subChild.Id, title = "'" + subChild.Name + "'", Checked = subChild.HasAccess });
+                }
+                obj.Add(new Final { id = type.Id, title = "'" + type.Name + "'", pId = type.ParentId, subs = ch, Checked = type.HasAccess });
+            }
+
+            //Serialize to JSON string.
+
+            var items = JsonConvert.SerializeObject(obj);
+
+            ViewBag.Json = items.Replace('"', ' ');
+
+
+            return View(obj);
+        }
+
+
     }
 }

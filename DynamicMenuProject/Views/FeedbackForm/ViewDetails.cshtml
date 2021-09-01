@@ -19,22 +19,17 @@
         @Model.FirstOrDefault().SubmitDate
 
     </p>
+    @{int index = 1;}
     @foreach (var item in Model)
     {
 
-        <p>
-            Question:
-        </p>
-        <p>
-            @item.Question
-        </p>
-        <p>
-            Answer:
-        </p>
-        <p>
-            @item.Answer
-        </p>
-        <p>@item.Options</p>
+    <p>
+        Question @index :  @item.Question
+    </p>
+    <p>
+        Answer @index :  @item.Answer  @item.Options
+    </p>
+        index++;
     }
 </body>
 </html>

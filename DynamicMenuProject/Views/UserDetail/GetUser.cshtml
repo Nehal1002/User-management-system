@@ -1,0 +1,138 @@
+﻿@model DynamicMenuProject.View_Models.AVViewModel
+
+@{
+    ViewData["Title"] = "GetUser";
+}
+
+<h1>GetUser</h1>
+<environment include="Development">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</environment>
+
+<div class="col-md-12">
+    <div class="card">
+        @*Bind User DropDown and displayed user details*@
+        <div class="card-header">
+            <label>Select User</label><br />
+            @Html.DropDownList("UserId", (IEnumerable<SelectListItem>)ViewBag.UserList, "Select")
+
+        </div>
+        <div class="card-body p-0">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.UserName</td>
+                        <td>@Model.Email</td>
+                        <td>@Model.FirstName</td>
+                        <td>@Model.LastName</td>
+                        <td>@Model.Address1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Datepicker - Select a Date Range</title>
+</head>
+<body>
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="StartDate" class="control-label"></label>
+            <input asp-for="StartDate" id="StartDate" type="text" class="form-control" autocomplete="off" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="EndDate" class="control-label"></label>
+            <input asp-for="EndDate" id="EndDate" type="text" class="form-control" autocomplete="off" />
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="code" />
+        <input type="hidden" asp-for="UserIdNew" />
+        <button type="submit" asp-controller="UserDetail" asp-action="GetUser" class="btn btn-primary">Save</button>
+    </form>
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var code = getUrlVars()["code"];
+        var selectedId = getUrlVars()["UserId"];
+        if (code != undefined && code != '') {
+            $('#code').val(code);
+        }
+        if (selectedId != undefined && selectedId != '') {
+            $('#UserIdNew').val(selectedId);
+            //alert(selectedId);
+        }
+
+        // Read a page's GET URL variables and return them as an associative array.
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+        $("#UserId").on("change", function () {
+            debugger;
+           var selectedId = $(this).val();
+
+
+           let r = (Math.random() + 1).toString(36).substring(7);
+           window.location.href = '@Url.Action("GetUser", "UserDetail")' + '?UserId=' + selectedId + '&code=' + r;
+        });
+        $(function () {
+            var dateFormat = "MM/dd/yyyy",
+                from = $("#StartDate")
+                    .datepicker({
+                        defaultDate: "+1w",
+                        changeMonth: true,
+                        numberOfMonths: 1
+                    })
+                    .on("change", function () {
+                        to.datepicker("option", "minDate", getDate(this));
+                    }),
+                to = $("#EndDate").datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    numberOfMonths: 1
+                })
+                    .on("change", function () {
+                        from.datepicker("option", "maxDate", getDate(this));
+                    });
+            function getDate(element) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate(dateFormat, element.value);
+                } catch (error) {
+                    date = null;
+                }
+                return date;
+            }
+        });
+    });
+</script>

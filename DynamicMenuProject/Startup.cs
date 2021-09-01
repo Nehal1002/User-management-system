@@ -19,6 +19,8 @@ using FinalProjectSecond.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Rotativa.AspNetCore;
+using System.Globalization;
+using System.Threading;
 
 namespace DynamicMenuProject
 {
@@ -48,6 +50,14 @@ namespace DynamicMenuProject
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            CultureInfo cultureInfo = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+            cultureInfo.DateTimeFormat.ShortDatePattern = "MM/dd/yyyy";
+            cultureInfo.DateTimeFormat.DateSeparator = "/";
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+
+
+
             services.Configure<IdentityOptions>(options =>
             {
                 options.User.RequireUniqueEmail = true;
